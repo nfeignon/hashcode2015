@@ -5,11 +5,18 @@ import os
 class Groupe:
     pass
 
+def attribuer_emplacement(serveurs, rangees):
+
+    serveurs.sort(key = lambda x: x.capacite)
+
+    for i in range(len(serveurs)):
+        serveurs[i].print_info();
 
 class Serveur:
-    def __init__(self, id, id_groupe):
+    def __init__(self, id, emplacements, capacite):
         self.id = id
-        self.id_groupe = id_groupe
+        self.emplacements = emplacements
+        self.capacite = capacite
         self.x = 0
         self.y = 0
 
@@ -33,8 +40,8 @@ def get_capacite_garantie(groupes):
 
     return capa_mini
 
-
-
+    def print_info(self):
+        print "id:%d, emplacements:%d, capacite:%d" % (self.id, self.emplacements, self.capacite)
 
 if __name__ == '__main__':
     print 'Hash code\n\n'
@@ -47,6 +54,7 @@ if __name__ == '__main__':
     serveurs = []
     rangees = []
     groupes = []
+    serveurs_object = []
 
     for i in range(n_rangees):
         rangees.append(['.' for j in range(emplacements)])
@@ -57,6 +65,7 @@ if __name__ == '__main__':
 
     for i in range(n_serveurs):
         serveurs.append([int(j) for j in raw_input().split()])
+        serveurs_object.append(Serveur(i, serveurs[i][0], serveurs[i][1]))
 
     print 'Entree :'
     for r in rangees:
@@ -64,6 +73,6 @@ if __name__ == '__main__':
             print c + '',
         print '\n'
 
+    attribuer_emplacement(serveurs_object, rangees)
 
-
-    print serveurs
+    #print serveurs
