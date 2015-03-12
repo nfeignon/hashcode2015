@@ -151,6 +151,9 @@ if __name__ == '__main__':
         serveurs.append([int(j) for j in raw_input().split()])
         serveurs_object.append(Serveur(i, serveurs[i][0], serveurs[i][1]))
 
+    for i in range(len(n_groupes)):
+        groupes.append([])
+
     # groupes.append([serveurs_object[0], serveurs_object[1]])
     # groupes.append([serveurs_object[3], serveurs_object[4]])
     # groupes.append([serveurs_object[6], serveurs_object[7], serveurs_object[8]])
@@ -161,17 +164,16 @@ if __name__ == '__main__':
     # rangees[0][5] = serveurs_object[3]
     # rangees[1][0] = serveurs_object[0]
 
-    serveurs_object[0].print_info()
-    serveurs_object[3].print_info()
-
-    print 'Entree :'
-    print_grille(rangees)
 
     attribuer_emplacement(serveurs_object, rangees)
-    get_output_file(serveurs_object)
+
+    for s in serveurs_object:
+        if s.group:
+            groupes[s.group].append(s)
+
     print get_capacite_garantie(groupes)
 
-    print 'Entree :'
     print_grille(rangees)
+    get_output_file(serveurs_object)
 
     #print serveurs
