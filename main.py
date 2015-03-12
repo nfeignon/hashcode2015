@@ -94,7 +94,7 @@ class Serveur:
             rangees[rangee][position + i] = self
 
 def get_capacite_garantie(groupes):
-    capa_mini = 100000000000000
+    capa_mini = sys.maxint
 
     for group in groupes:
         for i in range(len(rangees)):
