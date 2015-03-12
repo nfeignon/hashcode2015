@@ -5,11 +5,69 @@ import os
 class Groupe:
     pass
 
+
+def emplacement_serveur_range(serveur, rangee):
+
+    taille = serveur.emplacements
+
+    debut = -1
+    count = 0
+
+
+    for i in range(len(rangee)):
+        if rangee[i] == '.':
+            count += 1
+            if debut == -1:
+                debut = i
+
+            if count == taille:
+                return debut
+        else:
+            count = 0
+            debut = -1
+
+        #print "i %d debut %d count %d" %(i, debut, count)
+
+    return -1
+
+
+def get_output_file(serveurs):
+
+    serveurs.sort(key = lambda x: x.id)
+
+    f = open('output.txt','w')
+
+    for serveur in serveurs:
+        if serveur.actif == False:
+            f.write('x')
+        else:
+            f.write("{0} {1} {2}".format(serveur.rangee, serveur.position, serveur.groupe))
+        f.write('\n')
+
+    f.close()
+
 def attribuer_emplacement(serveurs, rangees):
 
-    serveurs.sort(key = lambda x: x.capacite)
+    serveurs.sort(key = lambda x: x.capacite, reverse=True)
+    rangee = 0
+    groupe = 0
 
     for i in range(len(serveurs)):
+        debut = emplacement_serveur_range(serveurs[i], rangees[rangee])
+
+        if debut != -1:
+            serveurs[i].placer_serveur(rangee, debut, rangees, groupe)
+
+        rangee += 1
+        groupe += 1
+
+        if rangee == len(rangees):
+            rangee = 0
+
+        if groupe == n_groupes:
+            groupe = 0
+
+        #print emplacement_serveur_range(serveurs[i], rangees[0])
         serveurs[i].print_info();
 
 class Serveur:
@@ -18,10 +76,22 @@ class Serveur:
         self.emplacements = emplacements
         self.capacite = capacite
         self.x = 0
-        self.y = 0
+        self.position = None
+        self.actif = False
+        self.rangee = None
+        self.groupe = None
 
     def print_info(self):
-        print "id:%d, emplacements:%d, capacite:%d" % (self.id, self.emplacements, self.capacite)
+        print "id:{0}, emplacements:{1}, capacite:{2}, rangee:{3}, position:{4}, groupe:{5}".format(self.id, self.emplacements, self.capacite, self.rangee, self.position, self.groupe)
+
+    def placer_serveur(self, rangee, position, rangees, groupe):
+        self.actif = True
+        self.rangee = rangee
+        self.position = position
+        self.groupe = groupe
+
+        for i in range(self.emplacements):
+            rangees[rangee][position + i] = self
 
 def get_capacite_garantie(groupes):
     capa_mini = 100000000000000
@@ -46,16 +116,16 @@ def get_capacite_garantie(groupes):
 
     return capa_mini
 
+
 def print_grille(rangees):
     for i in range(len(rangees)):
         for j in range(len(rangees[i])):
             c = rangees[i][j]
             if not c == '.' and not c == 'x':           # it's a server
-                print str(c.id) + '',
+                print 'o',
             else:
                 print c + '',
         print '\n'
-
 
 if __name__ == '__main__':
     print 'Hash code\n\n'
@@ -81,14 +151,14 @@ if __name__ == '__main__':
         serveurs.append([int(j) for j in raw_input().split()])
         serveurs_object.append(Serveur(i, serveurs[i][0], serveurs[i][1]))
 
-    groupes.append([serveurs_object[0], serveurs_object[1]])
-    groupes.append([serveurs_object[3], serveurs_object[4]])
+    # groupes.append([serveurs_object[0], serveurs_object[1]])
+    # groupes.append([serveurs_object[3], serveurs_object[4]])
     # groupes.append([serveurs_object[6], serveurs_object[7], serveurs_object[8]])
     # groupes.append([serveurs_object[9], serveurs_object[10], serveurs_object[11]])
     # groupes.append([serveurs_object[12], serveurs_object[13], serveurs_object[14]])
 
-    rangees[0][0] = serveurs_object[0]
-    rangees[0][5] = serveurs_object[3]
+    # rangees[0][0] = serveurs_object[0]
+    # rangees[0][5] = serveurs_object[3]
     # rangees[1][0] = serveurs_object[0]
 
     serveurs_object[0].print_info()
@@ -97,7 +167,11 @@ if __name__ == '__main__':
     print 'Entree :'
     print_grille(rangees)
 
-    # attribuer_emplacement(serveurs_object, rangees)
+    attribuer_emplacement(serveurs_object, rangees)
+    get_output_file(serveurs_object)
     print get_capacite_garantie(groupes)
+
+    print 'Entree :'
+    print_grille(rangees)
 
     #print serveurs
