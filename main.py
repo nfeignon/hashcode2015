@@ -51,26 +51,59 @@ def attribuer_emplacement(serveurs, rangees):
     serveurs.sort(key = lambda x: x.capacite, reverse=True)
     rangee = 0
     groupe = 0
+    rangee_tested = 0
 
-    for i in range(len(serveurs)):
+
+    i = 0
+    while i < len(serveurs):
+
+
         debut = emplacement_serveur_range(serveurs[i], rangees[rangee])
+        rangee_tested += 1
 
         if debut != -1:
             serveurs[i].placer_serveur(rangee, debut, rangees, groupe)
-            groupe +=1
-            #rangee +=1
 
         rangee += 1
-        #groupe += 1
 
         if rangee == len(rangees):
             rangee = 0
 
-        if groupe == n_groupes:
-            groupe = 0
 
-        #print emplacement_serveur_range(serveurs[i], rangees[0])
         serveurs[i].print_info();
+
+        i += 1
+
+    etat_groupe = 1
+
+    for serveur in serveurs:
+
+        if serveur.actif == True:
+            serveur.placer_groupe(groupe)
+
+            if groupe == n_groupes - 1 and etat_groupe == 1:
+                etat_groupe = 2
+                continue
+
+            if etat_groupe == 2:
+                etat_groupe = 3
+
+            if groupe == 0 and etat_groupe == 3:
+                etat_groupe = 4
+                continue
+
+            if etat_groupe == 4:
+                etat_groupe = 1
+
+            if etat_groupe == 1:
+                groupe +=1
+            elif etat_groupe == 3:
+                groupe -=1
+
+
+
+
+
 
 class Serveur:
     def __init__(self, id, emplacements, capacite):
@@ -95,6 +128,9 @@ class Serveur:
         for i in range(self.emplacements):
             rangees[rangee][position + i] = self
 
+    def placer_groupe(self, groupe):
+        self.groupe = groupe
+
 def get_capacite_garantie(groupes):
     capa_mini = 100000000000000
 
@@ -117,6 +153,7 @@ def get_capacite_garantie(groupes):
                 capa_mini = capa
 
     return capa_mini
+
 
 def print_grille(rangees):
     for i in range(len(rangees)):
@@ -172,6 +209,7 @@ if __name__ == '__main__':
 
     for s in serveurs_object:
         if s.groupe != None:
+            print s.groupe
             groupes[s.groupe].append(s)
         if s.rangee != None:
             rangees_serv[s.rangee].append(s)
@@ -179,6 +217,7 @@ if __name__ == '__main__':
     print len(rangees_serv)
 
     print get_capacite_garantie(groupes)
+    #print get_capacite_garantie2(groupes, rangees_serv)
 
     print_grille(rangees)
     get_output_file(serveurs_object)
