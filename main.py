@@ -2,19 +2,44 @@ import math
 import sys
 import os
 
-if __name__ == '__main__':
-    print 'Hash code'
+class Groupe:
+    pass
 
-    rangees, emplacements, n_indisponibles, groupes, n_serveurs = [int(i) for i in raw_input().split()]
+
+class Serveur:
+    def __init__(self, id, id_groupe):
+        self.id = id
+        self.id_groupe = id_groupe
+        self.x = 0
+        self.y = 0
+
+
+if __name__ == '__main__':
+    print 'Hash code\n\n'
+
+    n_rangees, emplacements, n_indisponibles, n_groupes, n_serveurs = [int(i) for i in raw_input().split()]
+    print str(n_groupes) + ' groupes'
 
     indisponibles = []
     serveurs = []
+    rangees = []
+
+    for i in range(n_rangees):
+        rangees.append(['.' for j in range(emplacements)])
 
     for i in range(n_indisponibles):
         indisponibles.append([int(j) for j in raw_input().split()])
+        rangees[indisponibles[i][0]][indisponibles[i][1]] = 'x'
 
     for i in range(n_serveurs):
         serveurs.append([int(j) for j in raw_input().split()])
 
-    print indisponibles
+    print 'Entree :'
+    for r in rangees:
+        for c in r:
+            print c + '',
+        print '\n'
+
+
+
     print serveurs
