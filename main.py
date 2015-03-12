@@ -101,8 +101,8 @@ def get_capacite_garantie(groupes):
             capa = 0
             for s in group:
                 capa += s.capacite
-                j = 0
 
+            j = 0
             while j < len(rangees[i]):
                 s = rangees[i][j]
                 if not s == '.' and not s == 'x' and s in group:           # it's a server
@@ -151,7 +151,7 @@ if __name__ == '__main__':
         serveurs.append([int(j) for j in raw_input().split()])
         serveurs_object.append(Serveur(i, serveurs[i][0], serveurs[i][1]))
 
-    for i in range(len(n_groupes)):
+    for i in range(n_groupes):
         groupes.append([])
 
     # groupes.append([serveurs_object[0], serveurs_object[1]])
@@ -168,8 +168,8 @@ if __name__ == '__main__':
     attribuer_emplacement(serveurs_object, rangees)
 
     for s in serveurs_object:
-        if s.group:
-            groupes[s.group].append(s)
+        if s.groupe != None:
+            groupes[s.groupe].append(s)
 
     print get_capacite_garantie(groupes)
 
