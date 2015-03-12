@@ -57,9 +57,11 @@ def attribuer_emplacement(serveurs, rangees):
 
         if debut != -1:
             serveurs[i].placer_serveur(rangee, debut, rangees, groupe)
+            groupe +=1
+            #rangee +=1
 
         rangee += 1
-        groupe += 1
+        #groupe += 1
 
         if rangee == len(rangees):
             rangee = 0
@@ -116,7 +118,6 @@ def get_capacite_garantie(groupes):
 
     return capa_mini
 
-
 def print_grille(rangees):
     for i in range(len(rangees)):
         for j in range(len(rangees[i])):
@@ -139,9 +140,11 @@ if __name__ == '__main__':
     rangees = []
     groupes = []
     serveurs_object = []
+    rangees_serv = []
 
     for i in range(n_rangees):
         rangees.append(['.' for j in range(emplacements)])
+        rangees_serv.append([])
 
     for i in range(n_indisponibles):
         indisponibles.append([int(j) for j in raw_input().split()])
@@ -170,6 +173,10 @@ if __name__ == '__main__':
     for s in serveurs_object:
         if s.groupe != None:
             groupes[s.groupe].append(s)
+        if s.rangee != None:
+            rangees_serv[s.rangee].append(s)
+
+    print len(rangees_serv)
 
     print get_capacite_garantie(groupes)
 
