@@ -7,9 +7,10 @@ class Groupe:
 
 
 class Serveur:
-    def __init__(self, id, id_groupe):
+    def __init__(self, id, emplacements, capacite):
         self.id = id
-        self.id_groupe = id_groupe
+        self.emplacements = emplacements
+        self.capacite = capacite
         self.x = 0
         self.y = 0
 
