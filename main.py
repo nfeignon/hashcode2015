@@ -20,28 +20,42 @@ class Serveur:
         self.x = 0
         self.y = 0
 
+    def print_info(self):
+        print "id:%d, emplacements:%d, capacite:%d" % (self.id, self.emplacements, self.capacite)
+
 def get_capacite_garantie(groupes):
-    capa_mini = int(float(inf))
+    capa_mini = 100000000000000
+
     for group in groupes:
+        for i in range(len(rangees)):
+            capa = 0
+            for s in group:
+                capa += s.capacite
+                j = 0
 
-        capa = 0
-        for s in group:
-            capa += s.capacite
+            while j < len(rangees[i]):
+                s = rangees[i][j]
+                if not s == '.' and not s == 'x' and s in group:           # it's a server
+                    capa -= rangees[i][j].capacite
+                    j += rangees[i][j].emplacements
 
-        for r in rangees:
-            for i in range(r):
-                if isinstance(r[i], Serveur):
-                    capa -= r[i].capacite
-
-                    i += r[i].emplacements - 1
+                j += 1
 
             if capa_mini > capa:
                 capa_mini = capa
 
     return capa_mini
 
-    def print_info(self):
-        print "id:%d, emplacements:%d, capacite:%d" % (self.id, self.emplacements, self.capacite)
+def print_grille(rangees):
+    for i in range(len(rangees)):
+        for j in range(len(rangees[i])):
+            c = rangees[i][j]
+            if not c == '.' and not c == 'x':           # it's a server
+                print str(c.id) + '',
+            else:
+                print c + '',
+        print '\n'
+
 
 if __name__ == '__main__':
     print 'Hash code\n\n'
@@ -67,12 +81,23 @@ if __name__ == '__main__':
         serveurs.append([int(j) for j in raw_input().split()])
         serveurs_object.append(Serveur(i, serveurs[i][0], serveurs[i][1]))
 
-    print 'Entree :'
-    for r in rangees:
-        for c in r:
-            print c + '',
-        print '\n'
+    groupes.append([serveurs_object[0], serveurs_object[1]])
+    groupes.append([serveurs_object[3], serveurs_object[4]])
+    # groupes.append([serveurs_object[6], serveurs_object[7], serveurs_object[8]])
+    # groupes.append([serveurs_object[9], serveurs_object[10], serveurs_object[11]])
+    # groupes.append([serveurs_object[12], serveurs_object[13], serveurs_object[14]])
 
-    attribuer_emplacement(serveurs_object, rangees)
+    rangees[0][0] = serveurs_object[0]
+    rangees[0][5] = serveurs_object[3]
+    # rangees[1][0] = serveurs_object[0]
+
+    serveurs_object[0].print_info()
+    serveurs_object[3].print_info()
+
+    print 'Entree :'
+    print_grille(rangees)
+
+    # attribuer_emplacement(serveurs_object, rangees)
+    print get_capacite_garantie(groupes)
 
     #print serveurs
