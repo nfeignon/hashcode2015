@@ -39,18 +39,15 @@ def partager_pizza(R,C,H,S):
                     R2 = i + x
                     C2 = j + y
 
-
                     size = (R2-R1+1)*(C2-C1+1)
                     if size >= 3 and size <= 12:
                         if R2 < R and C2 < C:
                             if tester_part(R1, C1, R2, C2):
                                 parts2.append([R1, C1, R2, C2])
-                                write_part(R1, C1, R2, C2)
 
             size_min = 20
             part_min = []
 
-            print parts2
             for part in parts2:
                 size = (part[2]-part[0]+1)*(part[3]-part[1]+1)
                 if size < size_min:
@@ -59,6 +56,7 @@ def partager_pizza(R,C,H,S):
 
             if len(parts2) > 0:
                 parts.append(part_min)
+                write_part(part_min[0], part_min[1], part_min[2], part_min[3])
 
     return parts
 
