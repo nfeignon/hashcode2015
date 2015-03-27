@@ -75,6 +75,15 @@ def output(parts):
     for part in parts:
         f.write("{0} {1} {2} {3}\n".format(part[0], part[1], part[2], part[3]))
 
+def score(parts):
+    score = 0
+    for part in parts:
+        size = (part[2]-part[0]+1)*(part[3]-part[1]+1)
+        score += size
+
+    print "SCORE:" + str(score)
+
+
 if __name__ == '__main__':
 
     print "Hash code test round"
@@ -97,4 +106,6 @@ if __name__ == '__main__':
 
     for i in range(len(parts)):
         print parts[i]
+
+    score(parts)
 
