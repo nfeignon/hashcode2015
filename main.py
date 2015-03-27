@@ -45,18 +45,18 @@ def partager_pizza(R,C,H,S):
                             if tester_part(R1, C1, R2, C2):
                                 parts2.append([R1, C1, R2, C2])
 
-            size_min = 20
-            part_min = []
+            size_max = 0
+            part_max = []
 
             for part in parts2:
                 size = (part[2]-part[0]+1)*(part[3]-part[1]+1)
-                if size < size_min:
-                    size_min = size
-                    part_min = part
+                if size > size_max:
+                    size_max = size
+                    part_max = part
 
             if len(parts2) > 0:
-                parts.append(part_min)
-                write_part(part_min[0], part_min[1], part_min[2], part_min[3])
+                parts.append(part_max)
+                write_part(part_max[0], part_max[1], part_max[2], part_max[3])
 
     return parts
 
