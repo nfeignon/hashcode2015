@@ -14,12 +14,7 @@ def tester_part(R1, C1, R2, C2):
             if pizza[i][j] == 'H':
                 jambons += 1
 
-            print pizza[i][j]
-
             cases += 1
-
-    print jambons
-    print cases
 
     if jambons >= 3 and cases <= 12:
         return True
@@ -63,11 +58,12 @@ def write_part(R1, C1, R2, C2):
 def output(parts):
     f = open('output.txt','w')
 
-    f.write(len(parts))
+    f.write(str(len(parts)) + '\n')
     for part in parts:
-        f.write("{0} {1} {2} {3}".format(part[0], parts[1], parts[2], parts[3]))
+        f.write("{0} {1} {2} {3}\n".format(part[0], part[1], part[2], part[3]))
 
 if __name__ == '__main__':
+
     print "Hash code test round"
 
     R,C,H,S = [int(i) for i in raw_input().split()]
@@ -76,9 +72,16 @@ if __name__ == '__main__':
 
     for i in range(R):
         pizza.append(raw_input())
+
+    parts = partager_pizza(R,C,H,S)
+
+    for i in range(R):
         print pizza[i]
 
 
-    print "Parts : "
+    print len(parts)
+    output(parts)
 
-    parts = partager_pizza(R,C,H,S)
+    for i in range(len(parts)):
+        print parts[i]
+
