@@ -70,8 +70,8 @@ def write_part(pizza, R1, C1, R2, C2):
             pizza[i] = pizza[i][:j] + 'X' + pizza[i][j+1:]
 
 
-def output(parts):
-    f = open('output.txt','w')
+def output(parts, score):
+    f = open('output' + str(score) + '.txt','w')
 
     f.write(str(len(parts)) + '\n')
     for part in parts:
@@ -83,7 +83,6 @@ def score(parts):
         size = (part[2]-part[0]+1)*(part[3]-part[1]+1)
         score += size
 
-    print "SCORE:" + str(score)
     return score
 
 
@@ -108,9 +107,9 @@ if __name__ == '__main__':
             if score_o > max_score:
                 max_score = score_o
                 best_parts = parts
+                print "SCORE:" + str(max_score)
+                output(best_parts, max_score)
 
-
-    output(best_parts)
 
     for i in range(len(best_parts)):
         print best_parts[i]
