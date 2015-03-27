@@ -26,6 +26,45 @@ def tester_part(R1, C1, R2, C2):
     else:
         return False
 
+def partager_pizza(R,C,H,S):
+
+    parts = []
+
+    for i in range(R):
+        for j in range(C):
+            R1 = i
+            C1 = j
+
+            for x in range(4):
+                for y in range(4):
+                    R2 = i + x
+                    C2 = j + y
+
+                    size = (R2-R1+1)*(C2-C1+1)
+
+                    if size >= 3 and size <= 12:
+                        if tester_part(R1, C1, R2, C2):
+                            parts.append([R1, C1, R2, C2])
+                            write_part(R1, C1, R2, C2)
+
+
+
+
+
+    return parts
+
+def write_part(R1, C1, R2, C2):
+    for i in range(R1, R2+1):
+        for j in range(C1, C2+1):
+            pizza[i][j] = 'X'
+
+
+def output(parts):
+    f = open('output.txt','w')
+
+    f.write(len(parts))
+    for part in parts:
+        f.write("{0} {1} {2} {3}".format(part[0], parts[1], parts[2], parts[3]))
 
 if __name__ == '__main__':
     print "Hash code test round"
