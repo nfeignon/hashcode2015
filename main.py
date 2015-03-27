@@ -38,8 +38,8 @@ def partager_pizza(R,C,H,S,i_d,j_d):
             C1 = j
 
             parts2 = []
-            for x in range(4):
-                for y in range(4):
+            for x in range(12):
+                for y in range(12):
                     R2 = i + x
                     C2 = j + y
 
