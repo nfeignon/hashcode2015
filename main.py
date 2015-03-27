@@ -56,7 +56,7 @@ def partager_pizza(R,C,H,S):
 def write_part(R1, C1, R2, C2):
     for i in range(R1, R2+1):
         for j in range(C1, C2+1):
-            pizza[i][j] = 'X'
+            pizza[i] = pizza[i][:j] + 'X' + pizza[i][j+1:]
 
 
 def output(parts):
@@ -80,4 +80,4 @@ if __name__ == '__main__':
 
     print "Parts : "
 
-    tester_part(0, 0, 2, 1)
+    parts = partager_pizza(R,C,H,S)
