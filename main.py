@@ -1,10 +1,13 @@
+import copy
 import math
 import sys
 import os
 
-pizza = []
+original_pizza = []
 
-def tester_part(R1, C1, R2, C2):
+def tester_part(pizza, R1, C1, R2, C2):
+    if R1 >= R2 or C1 >= C2:
+        return False
 
     jambons = 0
     cases = 0
@@ -24,12 +27,13 @@ def tester_part(R1, C1, R2, C2):
     else:
         return False
 
-def partager_pizza(R,C,H,S):
+def partager_pizza(R,C,H,S,i_d,j_d):
+    pizza = copy.deepcopy(original_pizza)
 
     parts = []
 
-    for i in range(R):
-        for j in range(C):
+    for i in range(i_d, R) + range(0, i_d):
+        for j in range(j_d, C) + range(0, j_d):
             R1 = i
             C1 = j
 
@@ -42,7 +46,7 @@ def partager_pizza(R,C,H,S):
                     size = (R2-R1+1)*(C2-C1+1)
                     if size >= 3 and size <= 12:
                         if R2 < R and C2 < C:
-                            if tester_part(R1, C1, R2, C2):
+                            if tester_part(pizza, R1, C1, R2, C2):
                                 parts2.append([R1, C1, R2, C2])
 
             size_max = 0
@@ -56,11 +60,11 @@ def partager_pizza(R,C,H,S):
 
             if len(parts2) > 0:
                 parts.append(part_max)
-                write_part(part_max[0], part_max[1], part_max[2], part_max[3])
+                write_part(pizza, part_max[0], part_max[1], part_max[2], part_max[3])
 
     return parts
 
-def write_part(R1, C1, R2, C2):
+def write_part(pizza, R1, C1, R2, C2):
     for i in range(R1, R2+1):
         for j in range(C1, C2+1):
             pizza[i] = pizza[i][:j] + 'X' + pizza[i][j+1:]
@@ -80,6 +84,7 @@ def score(parts):
         score += size
 
     print "SCORE:" + str(score)
+    return score
 
 
 if __name__ == '__main__':
@@ -91,19 +96,25 @@ if __name__ == '__main__':
     print "R:%s, C:%s, H:%s, S:%s" % (R,C,H,S)
 
     for i in range(R):
-        pizza.append(raw_input())
+        original_pizza.append(raw_input())
 
-    parts = partager_pizza(R,C,H,S)
-
+    max_score = 0
+    best_parts = []
     for i in range(R):
-        print pizza[i]
+        for j in range(C):
+            parts = partager_pizza(R,C,H,S,i,j)
+            score_o = score(parts)
+
+            if score_o > max_score:
+                max_score = score_o
+                best_parts = parts
 
 
-    print len(parts)
-    output(parts)
+    output(best_parts)
 
-    for i in range(len(parts)):
-        print parts[i]
+    for i in range(len(best_parts)):
+        print best_parts[i]
 
-    score(parts)
+    print 'score final:'
+    score(best_parts)
 
