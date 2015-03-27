@@ -214,9 +214,50 @@ if __name__ == '__main__':
         if s.rangee != None:
             rangees_serv[s.rangee].append(s)
 
-    print len(rangees_serv)
 
-    print get_capacite_garantie(groupes)
+
+    max_result = 0
+    # for s in groupes[0]:
+    #     for s2 in groupes[len(groupes)-1]:
+    #         i = groupes[0].index(s)
+    #         i2 = groupes[len(groupes)-1].index(s2)
+
+    #         groupes[len(groupes)-1].append(groupes[0][i])
+    #         groupes[0].append(groupes[len(groupes)-1][i2])
+
+    #         del groupes[0][i]
+    #         del groupes[len(groupes)-1][i2]
+
+    #         result = get_capacite_garantie(groupes)
+
+    best_result = get_capacite_garantie(groupes)
+    for i in range(10):
+        groupes[i].append(groupes[i+1][0])
+        groupes[i+1].append(groupes[i][0])
+
+        del groupes[i][0]
+        del groupes[i+1][0]
+
+        result = get_capacite_garantie(groupes)
+
+        if result > best_result:
+            best_result = result
+            continue
+
+        tmp = groupes[i].pop()
+        tmp2 = groupes[i+1].pop()
+
+        groupes[i].append(tmp2)
+        groupes[i+1].append(tmp)
+
+
+    for g in groupes:
+        capa = 0
+        for s in g:
+            capa += s.capacite
+        print capa
+
+    print 'result = ' + str(get_capacite_garantie(groupes))
     #print get_capacite_garantie2(groupes, rangees_serv)
 
     print_grille(rangees)
