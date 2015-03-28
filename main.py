@@ -19,11 +19,14 @@ class Ballon:
 
 def calcul_score():
     score = 0
+    print ballons
 
-    for c in cibles:
-        for b in ballons:
-            if b.couvre(c[0], c[1]):
-                score += 1
+    for tour in ballons_tours:
+        for c in cibles:
+            for ballon in tour:
+                if ballon.couvre(c[0], c[1]):
+                    score += 1
+                break
 
     print "SCORE: " + str(score)
 
@@ -34,7 +37,7 @@ def print_map(map):
     for i in range(len(map)):
         for j in range(len(map[i])):
             sys.stdout.write (map[i][j])
-        print 
+        print
 
 print "Hash code final round"
 
@@ -80,11 +83,15 @@ for i in range(ROWS):
 print_map(carte_cibles)
 
 
-ballons = []
-for i in range(BALLONS):
-    ballons.append(Ballon())
+ballons_tours = []
+for i in range(TOURS):
+    ballons = []
 
-print ballons
+    for j in range(BALLONS):
+        ballons.append(Ballon())
+
+    ballons_tours.append(ballons)
+
 
 calcul_score()
 
