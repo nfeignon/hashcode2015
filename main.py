@@ -19,12 +19,11 @@ class Ballon:
 
 def calcul_score():
     score = 0
-    print ballons
 
     for tour in ballons_tours:
         for c in cibles:
             for ballon in tour:
-                if ballon.couvre(c[0], c[1]):
+                if ballon.altitude != 0 and ballon.couvre(c[0], c[1]):
                     score += 1
                 break
 
@@ -48,6 +47,18 @@ def get_couverture():
                 carte_couverture[cible[0]][cible[1]] = 'O'
 
     return carte_couverture
+
+def write_file(score):
+    f = open("output_" + str(score) + ".txt", "w")
+
+    for i in range(TOURS):
+        s = ''
+        for j in range(BALLONS):
+            s += '0 '
+
+        f.write(s + '\n')
+
+    f.close()
 
 
 ########################
@@ -106,5 +117,6 @@ for i in range(TOURS):
 print_map(get_couverture())
 print_map(carte_cibles)
 
-calcul_score()
+score = calcul_score()
+write_file(score)
 
