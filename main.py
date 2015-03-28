@@ -2,6 +2,7 @@ import copy
 import math
 import sys
 import os
+from time import sleep
 
 class Ballon:
     def __init__(self):
@@ -69,8 +70,12 @@ def get_couverture():
 
     for cible in cibles:
         for ballon in ballons:
+
             if ballon.couvre(cible[0], cible[1]):
-                carte_couverture[cible[0]][cible[1]] = 'O'
+                carte_couverture[cible[0]][cible[1]] = 'o'
+
+            if ballon.actif == True:
+                carte_couverture[ballon.r][ballon.c] = 'X'
 
     return carte_couverture
 
@@ -152,6 +157,16 @@ for i in range(1, TOURS):
         ballons.append(Ballon())
 
     ballons_tours.append(ballons)
+
+############################################
+
+for i in range(TOURS):
+    couverture = get_couverture()
+    os.system('clear')
+    print_map(couverture)
+    print "ROUND %s" % (i,)
+    sleep(1.0 / 1000.0)
+
 
 score = calcul_score()
 write_file(score)
