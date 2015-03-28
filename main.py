@@ -76,6 +76,8 @@ def get_couverture():
 
             if ballon.actif == True:
                 carte_couverture[ballon.r][ballon.c] = 'X'
+            else:
+                carte_couverture[ballon.r][ballon.c] = 'W'
 
     return carte_couverture
 
@@ -92,6 +94,8 @@ def write_file(score):
     f.close()
 
 
+########################
+########################
 ########################
 
 print "Hash code final round"
@@ -145,17 +149,15 @@ for i in range(TOURS):
     ballons_tours.append(ballons)
 
 ############################################
+############################################
+############################################
 
 for i in range(TOURS):
     couverture = get_couverture()
     os.system('clear')
     print_map(couverture)
     print "ROUND %s" % (i,)
-    sleep(1.0 / 1000.0)
-
-
-    
-
+    #sleep(1.0 / 1000.0)
 
 score = calcul_score()
 write_file(score)
