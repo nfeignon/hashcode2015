@@ -67,12 +67,19 @@ class Ballon:
 def calcul_score():
     score = 0
 
+
     for tour in ballons_tours:
-        for c in cibles:
-            for ballon in tour:
-                if ballon.actif and ballon.altitude != 0 and ballon.couvre(c[0], c[1]):
-                    score += 1
-                    break
+        done = {}
+
+        for ballon in tour:
+            if ballon.actif and ballon.altitude > 0:
+
+                for cov in cover[ballon.r][ballon.c]:
+
+                    if cov not in done:
+                        score +=1
+                        done[cov] = True
+
 
     print "SCORE: " + str(score)
 
@@ -170,6 +177,30 @@ for j in range(BALLONS):
     ballons.append(b)
 ballons_tours.append(ballons)
 
+cover = []
+
+for i in range(ROWS):
+    row = []
+    for j in range(COLUMNS):
+        row.append([])
+    cover.append(row)
+
+for i in range(ROWS):
+    for j in range(COLUMNS):
+
+        for x in range(-RAYON, RAYON+1):
+            for y in range(-RAYON, RAYON+1):
+
+                r = i + x
+                c = (j + y)%COLUMNS
+
+                if r >= 0 and r < ROWS:
+                    if cibles_dict[(r,c)] == True:
+                        isCouvert = ((i - r)**2 + (min(abs(j-c), COLUMNS-abs(j-c)))**2) <= RAYON**2
+                        if isCouvert:
+                            cover[i][j].append((r,c))
+
+
 ############################################
 
 for i in range(1, TOURS):
@@ -246,5 +277,5 @@ for i in range(1, TOURS):
 #     print "ROUND %s" % (i,)
 
 score = calcul_score()
-write_file(score)
+write_file(0)
 
