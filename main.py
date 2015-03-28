@@ -227,6 +227,7 @@ for i in range(1, TOURS):
     for j in range(BALLONS):
         b = copy.deepcopy(ballons_tours[i-1][j])
 
+
         if i < 50:
 
             rd = [0]
@@ -240,25 +241,27 @@ for i in range(1, TOURS):
 
             data = []
             vecteur = altitudes[b.altitude - 1][b.r][b.c]
-
+            norm = vecteur[0]**2 + vecteur[1]**2
 
             r,c = deplacement(b.r, b.c, vecteur)
             if valid(r,c):
-                data.append((0, couverture_new(new_carte, r, c), [r,c]))
+                data.append((0, couverture_new(new_carte, r, c), [r,c], norm))
 
             if b.altitude > 1:
 
                 vecteur = altitudes[b.altitude - 2][b.r][b.c]
+                norm = vecteur[0]**2 + vecteur[1]**2
                 r,c = deplacement(b.r, b.c, vecteur)
                 if valid(r,c):
-                    data.append((-1, couverture_new(new_carte, r, c), [r,c]))
+                    data.append((-1, couverture_new(new_carte, r, c), [r,c], norm))
 
             if b.altitude < ALTITUDES:
 
                 vecteur = altitudes[b.altitude][b.r][b.c]
                 r,c = deplacement(b.r, b.c, vecteur)
+                norm = vecteur[0]**2 + vecteur[1]**2
                 if valid(r,c):
-                    data.append((1, couverture_new(new_carte, r, c), [r,c]))
+                    data.append((1, couverture_new(new_carte, r, c), [r,c], norm))
 
             if len(data) > 0:
 
@@ -267,6 +270,11 @@ for i in range(1, TOURS):
                     print "ok"
 
                 choix = mx[0]
+
+            if cover[b.r][b.c] == 0:
+                mx =  max(data,key=lambda item:item[3])
+                choix = mx[0]
+
 
         if choix == -1:
             b.move_down()
