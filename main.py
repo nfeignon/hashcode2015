@@ -209,55 +209,55 @@ for i in range(1, TOURS):
     for j in range(BALLONS):
         b = copy.deepcopy(ballons_tours[i-1][j])
 
-        print 'old_direction: ' + str(b.direction)
+        # print 'old_direction: ' + str(b.direction)
 
-        if b.altitude > 0:
-            nb_couv = b.get_couverture_nb()   # nombre de cibles couvertes par ce ballon
+        # if b.altitude > 0:
+        #     nb_couv = b.get_couverture_nb()   # nombre de cibles couvertes par ce ballon
 
-            vecteur1 = altitudes[b.altitude-1][b.r][b.c]
-            vecteur2 = altitudes[b.altitude-1-1][b.r][b.c]
+        #     vecteur1 = altitudes[b.altitude-1][b.r][b.c]
+        #     vecteur2 = altitudes[b.altitude-1-1][b.r][b.c]
 
-            if b.altitude < ALTITUDES-1:
-                vecteur3 = altitudes[b.altitude+1-1][b.r][b.c]
+        #     if b.altitude < ALTITUDES-1:
+        #         vecteur3 = altitudes[b.altitude+1-1][b.r][b.c]
 
-            if nb_couv < 5:                 # on veut bouger rapidement
-                if b.altitude == ALTITUDES-1:
-                    vecteur3 = [0, 0]
-                if vecteur1[0] >= vecteur2[0] and vecteur1[0] >= vecteur3[0]:
-                    b.stay()
-                elif vecteur2[0] >= vecteur1[0] and vecteur2[0] >= vecteur3[0]:
-                    b.move_down()
-                elif vecteur3[0] >= vecteur2[0] and vecteur3[0] >= vecteur1[0]:
-                    b.move_up()
-            else:                           # on ne veut pas bouger
-                if b.altitude == ALTITUDES-1:
-                    vecteur3 = [100000, 100000]
-                if vecteur1[0] <= vecteur2[0] and vecteur1[0] <= vecteur3[0]:
-                    b.stay()
-                elif vecteur2[0] <= vecteur1[0] and vecteur2[0] <= vecteur3[0]:
-                    b.move_down()
-                elif vecteur3[0] <= vecteur2[0] and vecteur3[0] <= vecteur1[0]:
-                    b.move_up()
-        else:
-            b.move_up()
-
-        print 'new_direction: ' + str(b.direction)
-
-
-        # rd = [0]
-        # if b.can_move_up():
-        #     rd.append(1)
-        # if b.can_move_down():
-        #     rd.append(-1)
-
-        # a = random.choice(rd)
-
-        # if a == -1:
-        #     b.move_down()
-        # elif a == 1:
+        #     if nb_couv < 5:                 # on veut bouger rapidement
+        #         if b.altitude == ALTITUDES-1:
+        #             vecteur3 = [0, 0]
+        #         if vecteur1[0] >= vecteur2[0] and vecteur1[0] >= vecteur3[0]:
+        #             b.stay()
+        #         elif vecteur2[0] >= vecteur1[0] and vecteur2[0] >= vecteur3[0]:
+        #             b.move_down()
+        #         elif vecteur3[0] >= vecteur2[0] and vecteur3[0] >= vecteur1[0]:
+        #             b.move_up()
+        #     else:                           # on ne veut pas bouger
+        #         if b.altitude == ALTITUDES-1:
+        #             vecteur3 = [100000, 100000]
+        #         if vecteur1[0] <= vecteur2[0] and vecteur1[0] <= vecteur3[0]:
+        #             b.stay()
+        #         elif vecteur2[0] <= vecteur1[0] and vecteur2[0] <= vecteur3[0]:
+        #             b.move_down()
+        #         elif vecteur3[0] <= vecteur2[0] and vecteur3[0] <= vecteur1[0]:
+        #             b.move_up()
+        # else:
         #     b.move_up()
-        # elif a == 0:
-        #     b.stay()
+
+        # print 'new_direction: ' + str(b.direction)
+
+
+        rd = [0]
+        if b.can_move_up():
+            rd.append(1)
+        if b.can_move_down():
+            rd.append(-1)
+
+        a = random.choice(rd)
+
+        if a == -1:
+            b.move_down()
+        elif a == 1:
+            b.move_up()
+        elif a == 0:
+            b.stay()
 
         b.maj_position()
 
