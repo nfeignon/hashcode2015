@@ -8,18 +8,34 @@ class Ballon:
         self.r = R_DEPART
         self.c = C_DEPART
         self.altitude = 0
+        self.actif = True
 
     def __repr__(self):
         return "<Ballon %d %d>" % (self.r, self.c)
 
     def couvre(self, r, c):
+        if self.actif == False:
+            return False
+
         isCouvert = (self.r - r)**2 + (min(abs(self.c-c), COLUMNS-abs(self.c-c)))**2 <= RAYON**2
         return isCouvert
 
+    def maj_position(self):
+        if self.actif == True:
+            if self.altitude > 0 and self.altitude <= ALTITUDES:
+                vecteur = altitudes[self.altitude-1][self.r][self.c]
+
+                r = self.r + vecteur[0]
+                c = (self.c + vecteur[1])%COLUMNS
+
+                if r < 0 or r >= R:
+                    self.actif = False
+                else:
+                    self.r = r
+                    self.c = c
 
 def calcul_score():
     score = 0
-    print ballons
 
     for tour in ballons_tours:
         for c in cibles:
@@ -103,8 +119,8 @@ for i in range(TOURS):
     ballons_tours.append(ballons)
 
 
+
 print_map(get_couverture())
-print_map(carte_cibles)
 
 calcul_score()
 
