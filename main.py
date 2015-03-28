@@ -126,6 +126,16 @@ def deplacement(r, c , vecteur):
 def valid(r, c):
     return r >= 0 and r < ROWS
 
+def couverture_new(carte, r, c):
+    count = 0
+    for cible in cover[r][c]:
+        if carte[cible[0]][cible[1]] == '.':
+            count += 1
+
+def couverture_noter(carte, r, c):
+    for cible in cover[r][c]:
+        carte[cible[0]][cible[1]] = ' '
+
 
 ########################
 ########################
@@ -208,13 +218,16 @@ for i in range(ROWS):
 
 ############################################
 
+
 for i in range(1, TOURS):
     ballons = []
+
+    new_carte = copy.deepcopy(carte_cibles)
 
     for j in range(BALLONS):
         b = copy.deepcopy(ballons_tours[i-1][j])
 
-        if i < 100:
+        if i < 50:
 
             rd = [0]
             if b.can_move_up():
@@ -225,30 +238,35 @@ for i in range(1, TOURS):
             choix = random.choice(rd)
         else:
 
+            data = []
+            vecteur = altitudes[b.altitude - 1][b.r][b.c]
 
-                norm = []
-                vecteur = altitudes[b.altitude - 1][b.r][b.c]
 
+            r,c = deplacement(b.r, b.c, vecteur)
+            if valid(r,c):
+                data.append((0, couverture_new(new_carte, r, c), [r,c]))
+
+            if b.altitude > 1:
+
+                vecteur = altitudes[b.altitude - 2][b.r][b.c]
                 r,c = deplacement(b.r, b.c, vecteur)
                 if valid(r,c):
-                    norm.append((0, len(cover[r][c])))
+                    data.append((-1, couverture_new(new_carte, r, c), [r,c]))
 
-                if b.altitude > 1:
+            if b.altitude < ALTITUDES:
 
-                    vecteur = altitudes[b.altitude - 2][b.r][b.c]
-                    r,c = deplacement(b.r, b.c, vecteur)
-                    if valid(r,c):
-                        norm.append((-1, len(cover[r][c])))
+                vecteur = altitudes[b.altitude][b.r][b.c]
+                r,c = deplacement(b.r, b.c, vecteur)
+                if valid(r,c):
+                    data.append((1, couverture_new(new_carte, r, c), [r,c]))
 
-                if b.altitude < ALTITUDES:
+            if len(data) > 0:
 
-                    vecteur = altitudes[b.altitude][b.r][b.c]
-                    r,c = deplacement(b.r, b.c, vecteur)
-                    if valid(r,c):
-                        norm.append((1, len(cover[r][c])))
+                mx = max(data,key=lambda item:item[1])
+                if mx[1] == 0:
+                    print "ok"
 
-                if len(norm) > 0:
-                    choix = max(norm,key=lambda item:item[1])[0]
+                choix = mx[0]
 
         if choix == -1:
             b.move_down()
@@ -259,12 +277,21 @@ for i in range(1, TOURS):
         else:
             b.stay()
 
+
         b.maj_position()
+        couverture_noter(new_carte, b.r, b.c)
+
 
         ballons.append(b)
 
     ballons_tours.append(ballons)
 
+dead = 0
+for ballon in ballons_tours[-1]:
+    if not ballon.actif:
+        dead += 1
+
+print "DEAD:%s"%(dead,)
 ############################################
 ############################################
 ############################################
