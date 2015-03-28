@@ -21,8 +21,9 @@ class Ballon:
             self.direction = 1
 
     def move_down(self):
-        self.altitude -= 1
-        self.direction = -1
+        if self.altitude > 1:
+            self.altitude -= 1
+            self.direction = -1
 
     def couvre(self, r, c):
         if self.actif == False:
