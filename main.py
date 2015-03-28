@@ -126,16 +126,19 @@ class Ballon:
         return "<Ballon %d %d %d>" % (self.r, self.c, self.altitude)
 
     def move_up(self):
+        self.direction = 0
         if self.altitude < ALTITUDES:
             self.altitude += 1
             self.direction = 1
-            self.maj_position()
 
     def move_down(self):
+        self.direction = 0
         if self.altitude > 1:
             self.altitude -= 1
             self.direction = -1
-            self.maj_position()
+
+    def stay(self):
+        self.direction = 0
 
     def couvre(self, r, c):
         if self.actif == False:
@@ -157,6 +160,11 @@ class Ballon:
                 else:
                     self.r = r
                     self.c = c
+
+    def can_move_up(self):
+        return self.altitude < ALTITUDES
+    def can move_down(self):
+        return self.altitude > 1
 
 def calcul_score():
     score = 0
@@ -272,8 +280,17 @@ for i in range(1, TOURS):
     for j in range(BALLONS):
         b = copy.deepcopy(ballons_tours[i-1][j])
 
-        b.direction = 0
+        rd = [0]
+
+        if b.can_move_up():
+            rd.append(1)
+        if b.can_move_down():
+            rd.append(-1)
+
+        
+
         b.move_up()
+        b.maj_position()
         ballons.append(b)
 
     ballons_tours.append(ballons)
@@ -286,10 +303,8 @@ for i in range(TOURS):
     couverture = get_couverture(ballons_tours[i])
     os.system('clear')
     print_map(couverture)
+    print ballons_tours[i]
     print "ROUND %s" % (i,)
-
-
->>>>>>> f50326deabaf3c7a837ea504f366e2af741ccbc5
 
 score = calcul_score()
 write_file(score)
