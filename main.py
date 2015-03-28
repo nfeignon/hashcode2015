@@ -13,7 +13,7 @@ class Ballon:
         self.direction = 0
 
     def __repr__(self):
-        return "<Ballon %d %d>" % (self.r, self.c)
+        return "<Ballon %d %d %d>" % (self.r, self.c, self.altitude)
 
     def move_up(self):
         self.altitude += 1
@@ -84,10 +84,11 @@ def get_couverture():
 def write_file(score):
     f = open("output_" + str(score) + ".txt", "w")
 
-    for i in range(TOURS):
+    for tour in ballons_tours:
         s = ''
-        for j in range(BALLONS):
-            s += '0 '
+
+        for ballon in tour:
+            s += '%d ' % ballon.direction
 
         f.write(s + '\n')
 
@@ -140,10 +141,23 @@ for i in range(ROWS):
     carte_cibles.append(row)
 
 ballons_tours = []
-for i in range(TOURS):
+
+ballons = []
+for j in range(BALLONS):
+    b = Ballon()
+    ballons.append(b)
+ballons_tours.append(ballons)
+
+############################################
+
+print_map(get_couverture())
+
+for i in range(1, TOURS):
     ballons = []
 
     for j in range(BALLONS):
+        b = copy.deepcopy(ballons_tours[i-1][j])
+        b.move_up()
         ballons.append(Ballon())
 
     ballons_tours.append(ballons)
@@ -157,7 +171,7 @@ for i in range(TOURS):
     os.system('clear')
     print_map(couverture)
     print "ROUND %s" % (i,)
-    #sleep(1.0 / 1000.0)
+
 
 score = calcul_score()
 write_file(score)
