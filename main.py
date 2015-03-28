@@ -3,6 +3,73 @@ import math
 import sys
 import os
 from time import sleep
+import random
+
+def construire_graph():
+
+    graph = []
+    queue = []
+
+    depart = Noeud(R_DEPART, C_DEPART, 0)
+    graph.append(depart)
+    queue.append(depart)
+
+
+    while queue:
+        current = queue.pop()
+
+        if current.altitude < 8:
+            vecteur = altitudes[current.altitude][current.row][current.column]
+
+            r = current.row + vecteur[0]
+            c = (current.column + vecteur[1])%COLUMNS
+
+            if r >= 0 and r < ROWS:
+                monter = Noeud(r, c, current.altitude + 1)
+                if monter not in current.voisins:
+                    current.voisins.append(monter)
+                if monter not in graph:
+                    graph.append(monter)
+                    queue.append(monter)
+
+        if current.altitude > 1:
+            vecteur = altitudes[current.altitude - 2][current.row][current.column]
+
+            r = current.row + vecteur[0]
+            c = (current.column + vecteur[1])%COLUMNS
+
+            if r >= 0 and r < ROWS:
+                descendre = Noeud(r, c, current.altitude - 1)
+                if descendre not in current.voisins:
+                    current.voisins.append(descendre)
+                if descendre not in graph:
+                    graph.append(descendre)
+                    queue.append(descendre)
+
+
+
+        #print len(graph)
+        # print current.voisins
+
+
+
+
+class Noeud:
+    def __init__(self, row, column, altitude):
+        self.row = row
+        self.column = column
+        self.altitude = altitude
+        self.name = str(row) + "-" + str(column) + "-" + str(altitude)
+        self.voisins = []
+
+    def __repr__(self):
+        return self.name
+
+    def __hash__(self):
+        return hash(self.name)
+
+    def __eq__(self, other):
+        return (self.row, self.column, self.altitude) == (other.row, other.column, other.altitude)
 
 class Ballon:
     def __init__(self):
@@ -38,7 +105,7 @@ class Ballon:
                 r = self.r + vecteur[0]
                 c = (self.c + vecteur[1])%COLUMNS
 
-                if r < 0 or r >= R:
+                if r < 0 and r >= ROWS:
                     self.actif = False
                 else:
                     self.r = r
@@ -65,7 +132,7 @@ def print_map(map):
             sys.stdout.write (map[i][j])
         print
 
-def get_couverture():
+def get_couverture(ballons):
     carte_couverture = copy.deepcopy(carte_cibles)
 
     for cible in cibles:
@@ -142,6 +209,8 @@ for i in range(ROWS):
 
 ballons_tours = []
 
+#construire_graph()
+
 ballons = []
 for j in range(BALLONS):
     b = Ballon()
@@ -150,15 +219,15 @@ ballons_tours.append(ballons)
 
 ############################################
 
-print_map(get_couverture())
-
 for i in range(1, TOURS):
     ballons = []
 
     for j in range(BALLONS):
         b = copy.deepcopy(ballons_tours[i-1][j])
+
         b.move_up()
-        ballons.append(Ballon())
+        b.maj_position()
+        ballons.append(b)
 
     ballons_tours.append(ballons)
 
@@ -167,7 +236,7 @@ for i in range(1, TOURS):
 ############################################
 
 for i in range(TOURS):
-    couverture = get_couverture()
+    couverture = get_couverture(ballons_tours[i])
     os.system('clear')
     print_map(couverture)
     print "ROUND %s" % (i,)
