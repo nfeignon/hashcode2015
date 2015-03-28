@@ -4,6 +4,49 @@ import sys
 import os
 from time import sleep
 
+class Pathing:
+    def __init__(self):
+        self.graph = None
+
+        self.came_from = {}
+        self.start = None
+        self.bfs_count = 0
+
+    def bfs(self, start):
+        self.bfs_count += 1
+
+        self.came_from = {}
+        self.start = start
+        queue = collections.deque()
+        queue.append(start)
+        self.came_from[start] = None
+
+        while len(queue):
+            current = queue.popleft()
+            for next in self.graph.neighbors(current):
+                if next not in self.came_from:
+                    queue.append(next)
+                    self.came_from[next] = current
+
+    def get_path(self, target):
+        current = target
+        path = [current]
+        while current != self.start:
+            try:
+               current = self.came_from[current]
+               path.append(current)
+            except KeyError:
+                return None
+
+        return path[::-1]
+
+    def get_distance(self, target):
+        path = self.get_path(target)
+        if path:
+            return len(self.get_path(target)) - 1
+        else:
+            return float("inf")
+
 class Ballon:
     def __init__(self):
         self.r = R_DEPART
@@ -52,9 +95,9 @@ def calcul_score():
     for tour in ballons_tours:
         for c in cibles:
             for ballon in tour:
-                if ballon.altitude != 0 and ballon.couvre(c[0], c[1]):
+                if ballon.actif and ballon.altitude != 0 and ballon.couvre(c[0], c[1]):
                     score += 1
-                break
+                    break
 
     print "SCORE: " + str(score)
 
@@ -159,6 +202,7 @@ for i in range(1, TOURS):
 
     for j in range(BALLONS):
         b = copy.deepcopy(ballons_tours[i-1][j])
+        b.direction = 0
         b.move_up()
         ballons.append(b)
 
