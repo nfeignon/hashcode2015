@@ -9,9 +9,18 @@ class Ballon:
         self.c = C_DEPART
         self.altitude = 0
         self.actif = True
+        self.direction = 0
 
     def __repr__(self):
         return "<Ballon %d %d>" % (self.r, self.c)
+
+    def move_up(self):
+        self.altitude += 1
+        self.direction = 1
+
+    def move_down(self):
+        self.altitude -= 1
+        self.direction = -1
 
     def couvre(self, r, c):
         if self.actif == False:
@@ -40,7 +49,7 @@ def calcul_score():
     for tour in ballons_tours:
         for c in cibles:
             for ballon in tour:
-                if ballon.couvre(c[0], c[1]):
+                if ballon.altitude != 0 and ballon.couvre(c[0], c[1]):
                     score += 1
                 break
 
@@ -64,6 +73,18 @@ def get_couverture():
                 carte_couverture[cible[0]][cible[1]] = 'O'
 
     return carte_couverture
+
+def write_file(score):
+    f = open("output_" + str(score) + ".txt", "w")
+
+    for i in range(TOURS):
+        s = ''
+        for j in range(BALLONS):
+            s += '0 '
+
+        f.write(s + '\n')
+
+    f.close()
 
 
 ########################
@@ -118,9 +139,11 @@ for i in range(TOURS):
 
     ballons_tours.append(ballons)
 
+############################################
 
 
 print_map(get_couverture())
 
-calcul_score()
+score = calcul_score()
+write_file(score)
 
