@@ -5,115 +5,6 @@ import os
 from time import sleep
 import random
 
-def construire_graph():
-
-    graph = []
-    queue = []
-
-    depart = Noeud(R_DEPART, C_DEPART, 0)
-    graph.append(depart)
-    queue.append(depart)
-
-
-    while queue:
-        current = queue.pop()
-
-        if current.altitude < 8:
-            vecteur = altitudes[current.altitude][current.row][current.column]
-
-            r = current.row + vecteur[0]
-            c = (current.column + vecteur[1])%COLUMNS
-
-            if r >= 0 and r < ROWS:
-                monter = Noeud(r, c, current.altitude + 1)
-                if monter not in current.voisins:
-                    current.voisins.append(monter)
-                if monter not in graph:
-                    graph.append(monter)
-                    queue.append(monter)
-
-        if current.altitude > 1:
-            vecteur = altitudes[current.altitude - 2][current.row][current.column]
-
-            r = current.row + vecteur[0]
-            c = (current.column + vecteur[1])%COLUMNS
-
-            if r >= 0 and r < ROWS:
-                descendre = Noeud(r, c, current.altitude - 1)
-                if descendre not in current.voisins:
-                    current.voisins.append(descendre)
-                if descendre not in graph:
-                    graph.append(descendre)
-                    queue.append(descendre)
-
-
-
-        #print len(graph)
-        # print current.voisins
-
-
-
-
-class Noeud:
-    def __init__(self, row, column, altitude):
-        self.row = row
-        self.column = column
-        self.altitude = altitude
-        self.name = str(row) + "-" + str(column) + "-" + str(altitude)
-        self.voisins = []
-
-    def __repr__(self):
-        return self.name
-
-    def __hash__(self):
-        return hash(self.name)
-
-    def __eq__(self, other):
-        return (self.row, self.column, self.altitude) == (other.row, other.column, other.altitude)
-
-class Pathing:
-    def __init__(self):
-        self.graph = None
-
-        self.came_from = {}
-        self.start = None
-        self.bfs_count = 0
-
-    def bfs(self, start):
-        self.bfs_count += 1
-
-        self.came_from = {}
-        self.start = start
-        queue = collections.deque()
-        queue.append(start)
-        self.came_from[start] = None
-
-        while len(queue):
-            current = queue.popleft()
-            for next in self.graph.neighbors(current):
-                if next not in self.came_from:
-                    queue.append(next)
-                    self.came_from[next] = current
-
-    def get_path(self, target):
-        current = target
-        path = [current]
-        while current != self.start:
-            try:
-               current = self.came_from[current]
-               path.append(current)
-            except KeyError:
-                return None
-
-        return path[::-1]
-
-    def get_distance(self, target):
-        path = self.get_path(target)
-        if path:
-            return len(self.get_path(target)) - 1
-        else:
-            return float("inf")
-
 class Ballon:
     def __init__(self):
         self.r = R_DEPART
@@ -146,6 +37,13 @@ class Ballon:
 
         isCouvert = ((self.r - r)**2 + (min(abs(self.c-c), COLUMNS-abs(self.c-c)))**2) <= RAYON**2
         return isCouvert
+
+    def get_couverture_nb(self):
+        nb = 0
+        for cible in cibles:
+            if self.couvre(cible[0], cible[1]):
+                nb += 1
+        return nb
 
     def maj_position(self):
         if self.actif == True:
@@ -280,26 +178,59 @@ for i in range(1, TOURS):
     for j in range(BALLONS):
         b = copy.deepcopy(ballons_tours[i-1][j])
 
-        rd = [0]
+        print 'old_direction: ' + str(b.direction)
 
-        if b.can_move_up():
-            rd.append(1)
-        if b.can_move_down():
-            rd.append(-1)
+        if b.altitude > 0:
+            nb_couv = b.get_couverture_nb()   # nombre de cibles couvertes par ce ballon
 
-        a = random.choice(rd)
+            vecteur1 = altitudes[b.altitude-1][b.r][b.c]
+            vecteur2 = altitudes[b.altitude-1-1][b.r][b.c]
 
-        if a == -1:
-            b.move_down()
-        elif a == 1:
+            if b.altitude < ALTITUDES-1:
+                vecteur3 = altitudes[b.altitude+1-1][b.r][b.c]
+
+            if nb_couv < 5:                 # on veut bouger rapidement
+                if b.altitude == ALTITUDES-1:
+                    vecteur3 = [0, 0]
+                if vecteur1[0] >= vecteur2[0] and vecteur1[0] >= vecteur3[0]:
+                    b.stay()
+                elif vecteur2[0] >= vecteur1[0] and vecteur2[0] >= vecteur3[0]:
+                    b.move_down()
+                elif vecteur3[0] >= vecteur2[0] and vecteur3[0] >= vecteur1[0]:
+                    b.move_up()
+            else:                           # on ne veut pas bouger
+                if b.altitude == ALTITUDES-1:
+                    vecteur3 = [100000, 100000]
+                if vecteur1[0] <= vecteur2[0] and vecteur1[0] <= vecteur3[0]:
+                    b.stay()
+                elif vecteur2[0] <= vecteur1[0] and vecteur2[0] <= vecteur3[0]:
+                    b.move_down()
+                elif vecteur3[0] <= vecteur2[0] and vecteur3[0] <= vecteur1[0]:
+                    b.move_up()
+        else:
             b.move_up()
-        elif a == 0:
-            b.stay()
+
+        print 'new_direction: ' + str(b.direction)
+
+
+        # rd = [0]
+        # if b.can_move_up():
+        #     rd.append(1)
+        # if b.can_move_down():
+        #     rd.append(-1)
+
+        # a = random.choice(rd)
+
+        # if a == -1:
+        #     b.move_down()
+        # elif a == 1:
+        #     b.move_up()
+        # elif a == 0:
+        #     b.stay()
 
         b.maj_position()
 
         ballons.append(b)
-    print i
 
     ballons_tours.append(ballons)
 
