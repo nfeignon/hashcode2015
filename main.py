@@ -62,17 +62,19 @@ class Ballon:
         if self.altitude < ALTITUDES:
             self.altitude += 1
             self.direction = 1
+            self.maj_position()
 
     def move_down(self):
         if self.altitude > 1:
             self.altitude -= 1
             self.direction = -1
+            self.maj_position()
 
     def couvre(self, r, c):
         if self.actif == False:
             return False
 
-        isCouvert = (self.r - r)**2 + (min(abs(self.c-c), COLUMNS-abs(self.c-c)))**2 <= RAYON**2
+        isCouvert = ((self.r - r)**2 + (min(abs(self.c-c), COLUMNS-abs(self.c-c)))**2) <= RAYON**2
         return isCouvert
 
     def maj_position(self):
@@ -83,7 +85,7 @@ class Ballon:
                 r = self.r + vecteur[0]
                 c = (self.c + vecteur[1])%COLUMNS
 
-                if r < 0 or r >= R:
+                if r < 0 or r >= ROWS:
                     self.actif = False
                 else:
                     self.r = r
@@ -212,12 +214,11 @@ for i in range(1, TOURS):
 ############################################
 ############################################
 
-for i in range(TOURS):
-    couverture = get_couverture()
-    os.system('clear')
-    print_map(couverture)
-    print "ROUND %s" % (i,)
-
+# for i in range(TOURS):
+#     couverture = get_couverture()
+#     os.system('clear')
+#     print_map(couverture)
+#     print "ROUND %s" % (i,)
 
 score = calcul_score()
 write_file(score)
