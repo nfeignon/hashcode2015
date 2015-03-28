@@ -155,7 +155,7 @@ class Ballon:
                 r = self.r + vecteur[0]
                 c = (self.c + vecteur[1])%COLUMNS
 
-                if r < 0 and r >= ROWS:
+                if r < 0 or r >= ROWS:
                     self.actif = False
                 else:
                     self.r = r
@@ -163,7 +163,7 @@ class Ballon:
 
     def can_move_up(self):
         return self.altitude < ALTITUDES
-    def can move_down(self):
+    def can_move_down(self):
         return self.altitude > 1
 
 def calcul_score():
@@ -287,11 +287,19 @@ for i in range(1, TOURS):
         if b.can_move_down():
             rd.append(-1)
 
-        
+        a = random.choice(rd)
 
-        b.move_up()
+        if a == -1:
+            b.move_down()
+        elif a == 1:
+            b.move_up()
+        elif a == 0:
+            b.stay()
+
         b.maj_position()
+
         ballons.append(b)
+    print i
 
     ballons_tours.append(ballons)
 
@@ -299,12 +307,12 @@ for i in range(1, TOURS):
 ############################################
 ############################################
 
-for i in range(TOURS):
-    couverture = get_couverture(ballons_tours[i])
-    os.system('clear')
-    print_map(couverture)
-    print ballons_tours[i]
-    print "ROUND %s" % (i,)
+# for i in range(TOURS):
+#     couverture = get_couverture(ballons_tours[i])
+#     os.system('clear')
+#     print_map(couverture)
+#     print ballons_tours[i]
+#     print "ROUND %s" % (i,)
 
 score = calcul_score()
 write_file(score)
