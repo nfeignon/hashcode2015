@@ -39,11 +39,8 @@ class Ballon:
         return isCouvert
 
     def get_couverture_nb(self):
-        nb = 0
-        for cible in cibles:
-            if self.couvre(cible[0], cible[1]):
-                nb += 1
-        return nb
+        if self.r >= 0 and self.r < ROWS and self.b >= 0 and self.b < COLUMNS:
+            return len(cover[self.r][self.b])
 
     def maj_position(self):
         if self.actif == True:
@@ -120,6 +117,14 @@ def write_file(score):
         f.write(s + '\n')
 
     f.close()
+
+def deplacement(r, c , vecteur):
+    r2 = r + vecteur[0]
+    c2 = (c + vecteur[1])%COLUMNS
+    return (r2, c2)
+
+def valid(r, c):
+    return r >= 0 and r < ROWS
 
 
 ########################
@@ -209,54 +214,49 @@ for i in range(1, TOURS):
     for j in range(BALLONS):
         b = copy.deepcopy(ballons_tours[i-1][j])
 
-        # print 'old_direction: ' + str(b.direction)
+        if i < 100:
 
-        # if b.altitude > 0:
-        #     nb_couv = b.get_couverture_nb()   # nombre de cibles couvertes par ce ballon
+            rd = [0]
+            if b.can_move_up():
+                rd.append(1)
+            if b.can_move_down():
+                rd.append(-1)
 
-        #     vecteur1 = altitudes[b.altitude-1][b.r][b.c]
-        #     vecteur2 = altitudes[b.altitude-1-1][b.r][b.c]
-
-        #     if b.altitude < ALTITUDES-1:
-        #         vecteur3 = altitudes[b.altitude+1-1][b.r][b.c]
-
-        #     if nb_couv < 5:                 # on veut bouger rapidement
-        #         if b.altitude == ALTITUDES-1:
-        #             vecteur3 = [0, 0]
-        #         if vecteur1[0] >= vecteur2[0] and vecteur1[0] >= vecteur3[0]:
-        #             b.stay()
-        #         elif vecteur2[0] >= vecteur1[0] and vecteur2[0] >= vecteur3[0]:
-        #             b.move_down()
-        #         elif vecteur3[0] >= vecteur2[0] and vecteur3[0] >= vecteur1[0]:
-        #             b.move_up()
-        #     else:                           # on ne veut pas bouger
-        #         if b.altitude == ALTITUDES-1:
-        #             vecteur3 = [100000, 100000]
-        #         if vecteur1[0] <= vecteur2[0] and vecteur1[0] <= vecteur3[0]:
-        #             b.stay()
-        #         elif vecteur2[0] <= vecteur1[0] and vecteur2[0] <= vecteur3[0]:
-        #             b.move_down()
-        #         elif vecteur3[0] <= vecteur2[0] and vecteur3[0] <= vecteur1[0]:
-        #             b.move_up()
-        # else:
-        #     b.move_up()
-
-        # print 'new_direction: ' + str(b.direction)
+            choix = random.choice(rd)
+        else:
 
 
-        rd = [0]
-        if b.can_move_up():
-            rd.append(1)
-        if b.can_move_down():
-            rd.append(-1)
+                norm = []
+                vecteur = altitudes[b.altitude - 1][b.r][b.c]
 
-        a = random.choice(rd)
+                r,c = deplacement(b.r, b.c, vecteur)
+                if valid(r,c):
+                    norm.append((0, len(cover[r][c])))
 
-        if a == -1:
+                if b.altitude > 1:
+
+                    vecteur = altitudes[b.altitude - 2][b.r][b.c]
+                    r,c = deplacement(b.r, b.c, vecteur)
+                    if valid(r,c):
+                        norm.append((-1, len(cover[r][c])))
+
+                if b.altitude < ALTITUDES:
+
+                    vecteur = altitudes[b.altitude][b.r][b.c]
+                    r,c = deplacement(b.r, b.c, vecteur)
+                    if valid(r,c):
+                        norm.append((1, len(cover[r][c])))
+
+                if len(norm) > 0:
+                    choix = max(norm,key=lambda item:item[1])[0]
+
+        if choix == -1:
             b.move_down()
-        elif a == 1:
+        elif choix == 1:
             b.move_up()
-        elif a == 0:
+        elif choix == 0:
+            b.stay()
+        else:
             b.stay()
 
         b.maj_position()
@@ -277,5 +277,5 @@ for i in range(1, TOURS):
 #     print "ROUND %s" % (i,)
 
 score = calcul_score()
-write_file(0)
+write_file(score)
 
