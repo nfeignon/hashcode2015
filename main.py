@@ -16,8 +16,9 @@ class Ballon:
         return "<Ballon %d %d %d>" % (self.r, self.c, self.altitude)
 
     def move_up(self):
-        self.altitude += 1
-        self.direction = 1
+        if self.altitude < ALTITUDES:
+            self.altitude += 1
+            self.direction = 1
 
     def move_down(self):
         self.altitude -= 1
@@ -154,7 +155,7 @@ for i in range(1, TOURS):
     for j in range(BALLONS):
         b = copy.deepcopy(ballons_tours[i-1][j])
         b.move_up()
-        ballons.append(Ballon())
+        ballons.append(b)
 
     ballons_tours.append(ballons)
 
