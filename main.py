@@ -36,6 +36,19 @@ def print_map(map):
             sys.stdout.write (map[i][j])
         print 
 
+def get_couverture():
+    carte_couverture = copy.deepcopy(carte_cibles)
+
+    for cible in cibles:
+        for ballon in ballons:
+            if ballon.couvre(cible[0], cible[1]):
+                carte_couverture[cible[0]][cible[1]] = 'O'
+
+    return carte_couverture
+
+
+########################
+
 print "Hash code final round"
 
 ROWS,COLUMNS,ALTITUDES = [int(i) for i in raw_input().split()]
@@ -72,19 +85,19 @@ for i in range(ROWS):
     row = []
     for j in range(COLUMNS):
         if cibles_dict[(i, j)] == True:
-            row.append('X')
-        else:
             row.append('.')
+        else:
+            row.append(' ')
     carte_cibles.append(row)
-
-print_map(carte_cibles)
-
 
 ballons = []
 for i in range(BALLONS):
     ballons.append(Ballon())
 
 print ballons
+
+print_map(get_couverture())
+print_map(carte_cibles)
 
 calcul_score()
 
