@@ -8,9 +8,18 @@ class Ballon:
         self.r = R_DEPART
         self.c = C_DEPART
         self.altitude = 0
+        self.direction = 0
 
     def __repr__(self):
         return "<Ballon %d %d>" % (self.r, self.c)
+
+    def move_up(self):
+        self.altitude += 1
+        self.direction = 1
+
+    def move_down(self):
+        self.altitude -= 1
+        self.direction = -1
 
     def couvre(self, r, c):
         isCouvert = (self.r - r)**2 + (min(abs(self.c-c), COLUMNS-abs(self.c-c)))**2 <= RAYON**2
@@ -112,6 +121,9 @@ for i in range(TOURS):
         ballons.append(Ballon())
 
     ballons_tours.append(ballons)
+
+
+############################################
 
 
 print_map(get_couverture())
